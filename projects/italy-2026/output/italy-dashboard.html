@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zechella Family Italian Odyssey — May 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@latest/dist/jspdf.umd.min.js"></script>
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+const { useState, useRef, useCallback, useEffect } = React;
+
+/* ---- Inline SVG Icon Components ---- */
+const svgBase = { xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 24 24", strokeWidth: 1.5, stroke: "currentColor" };
+
+const Calendar = ({ className }) => (
+    <svg {...svgBase} className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
+);
+const MapPin = ({ className }) => (
+    <svg {...svgBase} className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>
+);
+const Plane = ({ className }) => (
+    <svg {...svgBase} className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" /></svg>
+);
+const Train = ({ className }) => (
+    <svg {...svgBase} className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M8 4h8l2 6H6l2-6ZM6 10v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6M9 18l-2 3M15 18l2 3M9.5 14h.01M14.5 14h.01" /></svg>
+);
+const Car = ({ className }) => (
+    <svg {...svgBase} className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0H21M3.375 14.25h17.25M3.375 14.25L6 6.75h12l2.625 7.5" /></svg>
+);
+const Home = ({ className }) => (
+    <svg {...svgBase} className={className}><path strokeLinecap="round" strokeLinejoin="round" d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" /></svg>
+);
+const DollarSign = ({ className }) => (
+    <svg {...svgBase} className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+);
+const Info = ({ className }) => (
+    <svg {...svgBase} className={className}><path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" /></svg>
+);
+const MapIcon = ({ className }) => (
+    <svg {...svgBase} className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" /></svg>
+);
+const Sun = ({ className }) => (
+    <svg {...svgBase} className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" /></svg>
+);
+const Users = ({ className }) => (
+    <svg {...svgBase} className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
+);
+const Download = ({ className }) => (
+    <svg {...svgBase} className={className}><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+);
+
+const ItineraryApp = () => {
+    const [activeTab, setActiveTab] = useState('timeline');
+    const [countdown, setCountdown] = useState('');
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [statusText, setStatusText] = useState('');
+    const contentRef = useRef(null);
+
+    const tabFilenames = {
+        timeline: 'Italy-2026-Daily-Itinerary',
+        logistics: 'Italy-2026-Logistics',
+        lodgings: 'Italy-2026-Lodging',
+        finances: 'Italy-2026-Finances',
+        tips: 'Italy-2026-Pro-Tips',
+    };
+
+    const generatePDF = useCallback(async () => {
+        const el = contentRef.current;
+        if (!el) return;
+        setIsGenerating(true);
+        setStatusText('Capturing...');
+        try {
+            const canvas = await html2canvas(el, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: '#f9fafb',
+                windowWidth: el.scrollWidth,
+            });
+            setStatusText('Building PDF...');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+            const pageW = 215.9, pageH = 279.4, margin = 10;
+            const usableW = pageW - 2 * margin;
+            const usableH = pageH - 2 * margin;
+            const scale = usableW / canvas.width;
+            const sliceHPx = usableH / scale;
+            let y = 0, page = 0;
+            while (y < canvas.height) {
+                if (page > 0) pdf.addPage();
+                const h = Math.min(sliceHPx, canvas.height - y);
+                const slice = document.createElement('canvas');
+                slice.width = canvas.width;
+                slice.height = h;
+                slice.getContext('2d').drawImage(canvas, 0, y, canvas.width, h, 0, 0, canvas.width, h);
+                pdf.addImage(slice.toDataURL('image/jpeg', 0.95), 'JPEG', margin, margin, usableW, h * scale);
+                y += h;
+                page++;
+            }
+            pdf.save(`${tabFilenames[activeTab] || 'Italy-2026'}.pdf`);
+        } catch (err) {
+            console.error('PDF generation failed:', err);
+            setStatusText('Error!');
+            await new Promise(r => setTimeout(r, 1500));
+        } finally {
+            setIsGenerating(false);
+            setStatusText('');
+        }
+    }, [activeTab]);
+
+    useEffect(() => {
+        const tripStart = new Date(2026, 4, 1); // May 1, 2026
+        const tripEnd = new Date(2026, 4, 16);  // May 16 (day after last day)
+        const update = () => {
+            const now = new Date();
+            if (now < tripStart) {
+                const diff = tripStart - now;
+                const days = Math.floor(diff / 86400000);
+                const hours = Math.floor((diff % 86400000) / 3600000);
+                setCountdown(`${days} day${days !== 1 ? 's' : ''}, ${hours} hour${hours !== 1 ? 's' : ''} to go!`);
+            } else if (now < tripEnd) {
+                const dayNum = Math.floor((now - tripStart) / 86400000) + 1;
+                setCountdown(`Day ${dayNum} of 15 — Enjoy Italy!`);
+            } else {
+                setCountdown('Trip complete!');
+            }
+        };
+        update();
+        const id = setInterval(update, 60000);
+        return () => clearInterval(id);
+    }, []);
+
+    const tabs = [
+        { id: 'timeline', label: 'Daily Itinerary', icon: Calendar },
+        { id: 'logistics', label: 'Logistics', icon: Plane },
+        { id: 'lodgings', label: 'Lodging', icon: Home },
+        { id: 'finances', label: 'Finances', icon: DollarSign },
+        { id: 'map', label: 'Map View', icon: MapIcon },
+        // { id: 'tips', label: 'Pro Tips', icon: Info },
+    ];
+
+    return (
+        <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
+            {/* Header */}
+            <header className="bg-emerald-900 text-white py-10 px-6 shadow-md">
+                <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl md:text-4xl font-bold mb-2">The Zechella Family Italian Odyssey</h1>
+                        <p className="text-emerald-200 text-lg flex items-center">
+                            <Calendar className="w-5 h-5 mr-2" /> May 1 - May 15, 2026
+                        </p>
+                        {countdown && <p className="text-emerald-300 text-sm mt-1 ml-7">{countdown}</p>}
+                    </div>
+                    <div className="mt-6 md:mt-0 flex gap-4 items-center">
+                        <div className="bg-emerald-800/50 p-3 rounded-lg text-center backdrop-blur-sm border border-emerald-700/50">
+                            <span className="block text-2xl font-bold">5</span>
+                            <span className="text-xs uppercase tracking-wider text-emerald-300">Travelers</span>
+                        </div>
+                        <div className="bg-emerald-800/50 p-3 rounded-lg text-center backdrop-blur-sm border border-emerald-700/50">
+                            <span className="block text-2xl font-bold">15</span>
+                            <span className="text-xs uppercase tracking-wider text-emerald-300">Days</span>
+                        </div>
+                        <div className="bg-emerald-800/50 p-3 rounded-lg text-center backdrop-blur-sm border border-emerald-700/50">
+                            <span className="block text-2xl font-bold">3</span>
+                            <span className="text-xs uppercase tracking-wider text-emerald-300">Cities</span>
+                        </div>
+                        {activeTab !== 'map' && (
+                            <button
+                                onClick={generatePDF}
+                                disabled={isGenerating}
+                                className={`ml-2 text-white p-3 rounded-lg flex items-center gap-2 transition-colors shadow-sm border ${
+                                    isGenerating
+                                        ? 'bg-emerald-700 border-emerald-600 cursor-wait'
+                                        : 'bg-emerald-600 hover:bg-emerald-500 border-emerald-500'
+                                }`}
+                            >
+                                {isGenerating ? (
+                                    <>
+                                        <svg className="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                        </svg>
+                                        <span className="font-bold hidden sm:inline">{statusText}</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Download className="w-5 h-5" />
+                                        <span className="font-bold hidden sm:inline">Save PDF</span>
+                                    </>
+                                )}
+                            </button>
+                        )}
+                    </div>
+                </div>
+            </header>
+
+            {/* Navigation */}
+            <div className="bg-white border-b sticky top-0 z-20 shadow-sm">
+                <div className="max-w-5xl mx-auto flex overflow-x-auto hide-scrollbar">
+                    {tabs.map((tab) => {
+                        const Icon = tab.icon;
+                        const isActive = activeTab === tab.id;
+                        return (
+                            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                                className={`flex items-center px-6 py-4 whitespace-nowrap border-b-2 transition-colors duration-200 font-medium ${
+                                    isActive
+                                        ? 'border-emerald-600 text-emerald-700'
+                                        : 'border-transparent text-gray-500 hover:text-gray-800 hover:bg-gray-50'
+                                }`}
+                            >
+                                <Icon className={`w-5 h-5 mr-2 ${isActive ? 'text-emerald-600' : 'text-gray-400'}`} />
+                                {tab.label}
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Main Content Area */}
+            <main ref={contentRef} className="max-w-5xl mx-auto p-4 md:p-6 lg:p-8">
+                {activeTab === 'timeline' && <TimelineView />}
+                {activeTab === 'logistics' && <LogisticsView />}
+                {activeTab === 'lodgings' && <LodgingsView />}
+                {activeTab === 'finances' && <FinancesView />}
+                {activeTab === 'map' && <MapView />}
+                {/* {activeTab === 'tips' && <TipsView />} */}
+            </main>
+        </div>
+    );
+};
+
+// --- Subcomponents ---
+
+const TimelineView = () => {
+    const schedule = [
+        {
+            date: 'Fri, May 1',
+            title: 'Departure Day',
+            location: 'Cincinnati (CVG)',
+            events: [
+                { time: '21:10', text: 'Flight BA 120 departs CVG', icon: Plane, type: 'transit' }
+            ]
+        },
+        {
+            date: 'Sat, May 2',
+            title: 'Arrival & Welcome to Tuscany',
+            location: 'Pisa / Barga',
+            events: [
+                { time: '10:05', text: 'Arrive in London (LHR)', icon: Plane, type: 'transit' },
+                { time: '12:30', text: 'Flight BA 612 departs LHR', icon: Plane, type: 'transit' },
+                { time: '15:50', text: 'Arrive at Pisa International Airport (PSA)', icon: Plane, type: 'transit' },
+                { time: '17:00', text: 'Pick up Alamo Rental Car', icon: Car, type: 'transit' },
+                { time: '18:30', text: 'Check-in to Casa Zia Franca (Barga)', icon: Home, type: 'lodging' }
+            ]
+        },
+        {
+            date: 'Sun, May 3',
+            title: 'Helping Out',
+            location: 'Barga, Tuscany',
+            events: [
+                { time: 'All Day', text: 'At Joy & Kelly\'s house — help with work around the house as needed. Plans flexible, playing it by ear.', icon: Home, type: 'activity' }
+            ]
+        },
+        {
+            date: 'Mon, May 4',
+            title: 'Helping Out',
+            location: 'Barga, Tuscany',
+            events: [
+                { time: 'All Day', text: 'At Joy & Kelly\'s house — continue helping out as needed. Plans flexible, playing it by ear.', icon: Home, type: 'activity' }
+            ]
+        },
+        {
+            date: 'Tue, May 5',
+            title: 'Culinary Delights',
+            location: 'Lucca',
+            events: [
+                { time: '10:00', text: 'Lucca Cook with Momma (3 hours)', icon: MapPin, type: 'activity' },
+                { time: 'Afternoon', text: 'Winery with Kings (TBD)', icon: MapPin, type: 'activity' }
+            ]
+        },
+        {
+            date: 'Wed, May 6',
+            title: 'Best of Florence',
+            location: 'Florence',
+            events: [
+                { time: 'Morning', text: '44 min drive from Barga to Lucca', icon: Car, type: 'transit' },
+                { time: '09:31', text: 'Train from Lucca to Florence, arrive 10:52 (Regionale 18509)', icon: Train, type: 'transit' },
+                { time: '14:15', text: 'Best of Florence Tour: David, Accademia w/ Duomo (3.5 hrs)', icon: MapPin, type: 'activity' }
+            ]
+        },
+        {
+            date: 'Thu, May 7',
+            title: 'Journey to Rome',
+            location: 'Pisa to Rome',
+            events: [
+                { time: '10:00', text: 'Drop off Alamo Rental Car at PSA Airport', icon: Car, type: 'transit' },
+                { time: '11:11', text: 'Train to Rome: Intercity 505 (Seats: 7A, 7C, 7D, 8C, 8D)', icon: Train, type: 'transit' },
+                { time: '14:33', text: 'Arrive at Roma Termini', icon: Train, type: 'transit' },
+                { time: '15:30', text: 'Check-in to citizenM Rome Isola Tiberina', icon: Home, type: 'lodging' },
+                { time: '19:00', text: 'Golf Cart Tour of Rome (2.5 hrs)', icon: MapPin, type: 'activity' }
+            ]
+        },
+        {
+            date: 'Fri, May 8',
+            title: 'The Vatican',
+            location: 'Rome',
+            events: [
+                { time: '10:30', text: 'Vatican & Basilica Tour (2.5 hrs)', icon: MapPin, type: 'activity' }
+            ]
+        },
+        {
+            date: 'Sat, May 9',
+            title: 'Ancient Rome',
+            location: 'Rome',
+            events: [
+                { time: '10:30', text: 'Colosseum Tour (3 hrs)', icon: MapPin, type: 'activity' }
+            ]
+        },
+        {
+            date: 'Sun, May 10',
+            title: 'South to Naples',
+            location: 'Rome to Naples',
+            events: [
+                { time: '12:30', text: 'Taxi/Uber to Roma Termini (15 min ride)', icon: Car, type: 'transit' },
+                { time: '13:40', text: 'Train to Naples: Italo 9977 (Carriage #2, Seats 8-12)', icon: Train, type: 'transit' },
+                { time: '14:53', text: 'Arrive at Napoli Centrale', icon: Train, type: 'transit' },
+                { time: '15:15', text: 'Uber to AirBnB Largo Ecce Homo 31', icon: Car, type: 'transit' },
+                { time: '15:30', text: 'Check-in to Naples AirBnB', icon: Home, type: 'lodging' }
+            ]
+        },
+        {
+            date: 'Mon, May 11',
+            title: 'Frozen in Time',
+            location: 'Pompeii',
+            events: [
+                { time: '09:20', text: 'Pompeii & Herculaneum Bus Tour (7 hrs) - Departs near train station', icon: MapPin, type: 'activity' }
+            ]
+        },
+        {
+            date: 'Tue, May 12',
+            title: 'Island Escape',
+            location: 'Capri',
+            events: [
+                { time: '08:00', text: 'Capri & Blue Grotto Tour (9 hrs) - Walk to port/dock', icon: MapPin, type: 'activity' }
+            ]
+        },
+        {
+            date: 'Wed, May 13',
+            title: 'The Stunning Coast',
+            location: 'Amalfi Coast',
+            events: [
+                { time: '08:30', text: 'Amalfi Coast & Sorrento Tour (8 hrs) - Departs near train station', icon: MapPin, type: 'activity' }
+            ]
+        },
+        {
+            date: 'Thu, May 14',
+            title: 'Napoli Local',
+            location: 'Naples',
+            events: [
+                { time: 'All Day', text: 'Tour Naples on your own. Enjoy pizza and coastal views!', icon: MapIcon, type: 'activity' }
+            ]
+        },
+        {
+            date: 'Fri, May 15',
+            title: 'Journey Home',
+            location: 'Naples to CVG',
+            events: [
+                { time: '10:00', text: 'Check-out of Naples AirBnB', icon: Home, type: 'lodging' },
+                { time: '12:30', text: '20-min car ride to Naples Airport', icon: Car, type: 'transit' },
+                { time: '15:00', text: 'Flight BA 1578 departs Naples', icon: Plane, type: 'transit' },
+                { time: '18:55', text: 'Arrive in Chicago (CHI)', icon: Plane, type: 'transit' },
+                { time: '20:56', text: 'Flight BA 5160 departs Chicago', icon: Plane, type: 'transit' },
+                { time: '23:56', text: 'Arrive safely at CVG', icon: Plane, type: 'transit' }
+            ]
+        }
+    ];
+
+    return (
+        <div className="space-y-6">
+            {schedule.map((day, idx) => (
+                <div key={idx} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col md:flex-row">
+                    {/* Date Column */}
+                    <div className="bg-emerald-50 text-emerald-900 p-4 md:w-48 flex-shrink-0 flex flex-row md:flex-col justify-between md:justify-start items-center md:items-start border-b md:border-b-0 md:border-r border-emerald-100">
+                        <div>
+                            <p className="font-bold text-lg">{day.date}</p>
+                            <p className="text-emerald-700 text-sm mt-1 flex items-center gap-1">
+                                <MapPin className="w-3 h-3" /> {day.location}
+                            </p>
+                        </div>
+                        <p className="text-sm font-medium text-emerald-800 md:mt-4 bg-emerald-100/50 px-2 py-1 rounded">{day.title}</p>
+                    </div>
+
+                    {/* Events Column */}
+                    <div className="p-4 flex-grow relative">
+                        <div className="absolute left-6 top-6 bottom-6 w-0.5 bg-gray-100 hidden md:block"></div>
+                        <ul className="space-y-4">
+                            {day.events.map((ev, eIdx) => {
+                                const Icon = ev.icon;
+                                const isTransit = ev.type === 'transit';
+                                const isLodging = ev.type === 'lodging';
+
+                                let iconColor = 'text-gray-500 bg-gray-100';
+                                if (isTransit) iconColor = 'text-blue-600 bg-blue-50';
+                                if (isLodging) iconColor = 'text-purple-600 bg-purple-50';
+                                if (ev.type === 'activity') iconColor = 'text-amber-600 bg-amber-50';
+
+                                return (
+                                    <li key={eIdx} className="relative z-10 flex items-start gap-4">
+                                        <div className={`p-2 rounded-full mt-1 ${iconColor}`}>
+                                            <Icon className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold bg-gray-100 text-gray-700 mb-1 border border-gray-200">
+                                                {ev.time}
+                                            </span>
+                                            <p className={`text-base ${isLodging || ev.type === 'activity' ? 'font-medium text-gray-900' : 'text-gray-700'}`}>
+                                                {ev.text}
+                                            </p>
+                                        </div>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+const LogisticsView = () => {
+    return (
+        <div className="space-y-8">
+            {/* Flights */}
+            <section>
+                <h2 className="text-2xl font-bold mb-4 flex items-center text-gray-800">
+                    <Plane className="w-6 h-6 mr-2 text-blue-600" /> Flights (British Airways)
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                        <div className="uppercase text-xs font-bold text-gray-400 mb-2">Outbound &bull; Thu, May 1 – Fri, May 2</div>
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+                                <div>
+                                    <p className="font-bold text-lg">BA 120</p>
+                                    <p className="text-sm text-gray-500">CVG (21:10) &rarr; LHR (10:05)</p>
+                                </div>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <p className="font-bold text-lg">BA 612</p>
+                                    <p className="text-sm text-gray-500">LHR (12:30) &rarr; PSA (15:50)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                        <div className="uppercase text-xs font-bold text-gray-400 mb-2">Return &bull; Fri, May 15</div>
+                        <div className="space-y-3">
+                            <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+                                <div>
+                                    <p className="font-bold text-lg">BA 1578</p>
+                                    <p className="text-sm text-gray-500">Naples (15:00) &rarr; Chicago (18:55)</p>
+                                </div>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <p className="font-bold text-lg">BA 5160</p>
+                                    <p className="text-sm text-gray-500">Chicago (20:56) &rarr; CVG (23:56)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Trains */}
+            <section>
+                <h2 className="text-2xl font-bold mb-4 flex items-center text-gray-800">
+                    <Train className="w-6 h-6 mr-2 text-emerald-600" /> Trains Booked
+                </h2>
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <table className="w-full text-left">
+                        <thead className="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th className="p-4 font-semibold text-gray-600">Date</th>
+                                <th className="p-4 font-semibold text-gray-600">Route</th>
+                                <th className="p-4 font-semibold text-gray-600">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            <tr>
+                                <td className="p-4 whitespace-nowrap">Wed, May 6</td>
+                                <td className="p-4"><strong>Lucca</strong> &rarr; <strong>Florence</strong></td>
+                                <td className="p-4 text-sm text-gray-600">
+                                    09:31 – 10:52 (1h21m)<br />
+                                    Regionale 18509
+                                </td>
+                            </tr>
+                            <tr>
+                                <td className="p-4 whitespace-nowrap">Thu, May 7</td>
+                                <td className="p-4"><strong>Pisa</strong> &rarr; <strong>Rome</strong></td>
+                                <td className="p-4 text-sm text-gray-600">
+                                    11:11 - 14:33 (3h22m)<br />
+                                    Intercity 505 | Seats: 7A, 7C, 7D, 8C, 8D
+                                </td>
+                            </tr>
+                            <tr>
+                                <td className="p-4 whitespace-nowrap">Sun, May 10</td>
+                                <td className="p-4"><strong>Rome</strong> &rarr; <strong>Naples</strong></td>
+                                <td className="p-4 text-sm text-gray-600">
+                                    13:40 - 14:53 (1h13m)<br />
+                                    Italo 9977 | Carriage 2, Seats: 8, 9, 10, 11, 12
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            {/* Car Rental */}
+            <section>
+                <h2 className="text-2xl font-bold mb-4 flex items-center text-gray-800">
+                    <Car className="w-6 h-6 mr-2 text-amber-500" /> Car Rental
+                </h2>
+                <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col md:flex-row gap-6 items-start">
+                    <div className="bg-amber-50 p-4 rounded-lg md:w-1/3">
+                        <h3 className="font-bold text-xl text-amber-900 mb-1">Alamo</h3>
+                        <p className="text-amber-700 text-sm font-mono bg-amber-100/50 p-1 inline-block rounded">Conf #758381187</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-grow">
+                        <div>
+                            <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Pickup</p>
+                            <p className="font-semibold text-gray-800">Sat, May 2 @ 17:00</p>
+                            <p className="text-sm text-gray-600 mt-1">Pisa International Airport (Aeroporto Galileo Galilei, 56121 Pisa PI)</p>
+                        </div>
+                        <div>
+                            <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Drop-off</p>
+                            <p className="font-semibold text-gray-800">Thu, May 7 @ 10:00</p>
+                            <p className="text-sm text-gray-600 mt-1">Pisa International Airport</p>
+                        </div>
+                        <div className="md:col-span-2 pt-3 border-t border-gray-100 mt-2">
+                            <p className="text-sm text-gray-500">
+                                <strong>Cost Included:</strong> $384 (5-day rental) + $55 (additional driver) + $72 (full coverage) = $514 total.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    );
+};
+
+const LodgingsView = () => {
+    const lodgings = [
+        {
+            city: 'Barga (Tuscany)',
+            name: 'Casa Zia Franca AirBnB',
+            dates: 'Sat, May 2 – Thu, May 7',
+            address: 'Via del Giardino, 44, 55051 Barga LU, Italy',
+            checkIn: '15:00',
+            checkOut: '11:00',
+            bgColor: 'bg-emerald-50',
+            borderColor: 'border-emerald-200',
+            innerBorder: 'border-emerald-100',
+            labelColor: 'text-emerald-600',
+            titleColor: 'text-emerald-900',
+            confBg: 'bg-emerald-100/50',
+            confText: 'text-emerald-800'
+        },
+        {
+            city: 'Rome',
+            name: 'citizenM Rome Isola Tiberina',
+            dates: 'Thu, May 7 – Sun, May 10',
+            address: "Lungotevere de' Cenci 5-8, Rome, Italy, 00186",
+            conf: '#99566483',
+            checkIn: '14:00',
+            checkOut: '11:00',
+            note: 'Luggage stored at front desk until departure',
+            bgColor: 'bg-blue-50',
+            borderColor: 'border-blue-200',
+            innerBorder: 'border-blue-100',
+            labelColor: 'text-blue-600',
+            titleColor: 'text-blue-900',
+            confBg: 'bg-blue-100/50',
+            confText: 'text-blue-800'
+        },
+        {
+            city: 'Naples',
+            name: 'Largo Ecce Homo AirBnB',
+            dates: 'Sun, May 10 – Fri, May 15',
+            address: "Largo Ecce Homo 31, ex Vico Santa Maria dell'Aiuto 1, Naples, 80134",
+            checkIn: '15:00',
+            checkOut: '10:00',
+            bgColor: 'bg-amber-50',
+            borderColor: 'border-amber-200',
+            innerBorder: 'border-amber-100',
+            labelColor: 'text-amber-600',
+            titleColor: 'text-amber-900',
+            confBg: 'bg-amber-100/50',
+            confText: 'text-amber-800'
+        }
+    ];
+
+    return (
+        <div className="space-y-6">
+            {lodgings.map((lodging, idx) => (
+                <div key={idx} className={`bg-white rounded-xl shadow-sm ${lodging.borderColor} border overflow-hidden flex flex-col md:flex-row`}>
+                    <div className={`${lodging.bgColor} p-6 md:w-64 flex-shrink-0 border-b md:border-b-0 md:border-r ${lodging.innerBorder} flex flex-col justify-center`}>
+                        <p className={`${lodging.labelColor} font-bold uppercase tracking-wider text-xs mb-1`}>{lodging.city}</p>
+                        <h3 className={`text-xl font-bold ${lodging.titleColor} leading-tight`}>{lodging.name}</h3>
+                        {lodging.conf && (
+                            <p className={`mt-2 font-mono text-xs ${lodging.confBg} p-1.5 rounded ${lodging.confText} inline-block w-max`}>
+                                Conf: {lodging.conf}
+                            </p>
+                        )}
+                    </div>
+
+                    <div className="p-6 flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex items-start gap-3">
+                            <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                                <p className="font-semibold text-gray-800">{lodging.dates}</p>
+                                <div className="text-sm text-gray-500 mt-1 space-y-0.5">
+                                    <p>In: {lodging.checkIn}</p>
+                                    <p>Out: {lodging.checkOut}</p>
+                                    {lodging.note && <p className="text-xs text-gray-400 mt-1 italic">{lodging.note}</p>}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                            <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                                <p className="font-medium text-gray-800 text-sm leading-relaxed">{lodging.address}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+const FinancesView = () => {
+    const expenses = [
+        { item: 'Alamo Car Rental', cost: 514, payer: 'Jim' },
+        { item: 'Barga AirBnB', cost: 1615, payer: 'Geoff' },
+        { item: 'Lucca Cooking Class', cost: 1862.50, payer: 'Jim' },
+        { item: 'Train: Lucca to Florence', cost: 54, payer: 'Logan' },
+        { item: 'Florence Best-of Tour', cost: 546.70, payer: 'Jim' },
+        { item: 'Train: Pisa to Rome', cost: 233, payer: 'Logan' },
+        { item: 'Rome citizenM Hotel', cost: 400, payer: 'Jim' },
+        { item: 'Rome Golf Cart Tour', cost: 532, payer: 'Geoff' },
+        { item: 'Vatican Tour', cost: 780, payer: 'Jim' },
+        { item: 'Colosseum Tour', cost: 1203, payer: 'Geoff' },
+        { item: 'Train: Rome to Naples', cost: 200, payer: 'Logan' },
+        { item: 'Naples AirBnB', cost: 1622, payer: 'Logan' },
+        { item: 'Pompeii Bus Tour', cost: 920, payer: 'Geoff' },
+        { item: 'Capri / Blue Grotto', cost: 967.85, payer: 'Jim' },
+        { item: 'Amalfi / Sorrento Tour', cost: 544.45, payer: 'Geoff' },
+    ];
+
+    const total = expenses.reduce((acc, curr) => acc + curr.cost, 0);
+
+    return (
+        <div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div className="bg-emerald-600 text-white p-6 rounded-xl shadow-sm">
+                    <h3 className="text-emerald-100 text-sm font-bold uppercase tracking-wider mb-1">Total Trip Bookings</h3>
+                    <p className="text-3xl font-bold">${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                    <p className="text-sm mt-2 text-emerald-100 opacity-90">*Excluding flights & daily meals</p>
+                </div>
+                <div className="bg-white border border-gray-200 p-6 rounded-xl shadow-sm flex flex-col justify-center">
+                    <h3 className="text-gray-500 text-sm font-bold uppercase tracking-wider mb-1">Avg Per Person (5)</h3>
+                    <p className="text-3xl font-bold text-gray-800">${(total / 5).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                </div>
+                <div className="bg-white border border-gray-200 p-6 rounded-xl shadow-sm flex flex-col justify-center">
+                    <h3 className="text-gray-500 text-sm font-bold uppercase tracking-wider mb-2">Payer Breakdown</h3>
+                    <div className="space-y-1 text-sm text-gray-600">
+                        {(() => {
+                            const byPayer = {};
+                            expenses.forEach(e => { byPayer[e.payer] = (byPayer[e.payer] || 0) + e.cost; });
+                            return Object.entries(byPayer).map(([name, amount]) => (
+                                <p key={name} className="flex justify-between">
+                                    <span>{name}:</span>
+                                    <span className="font-semibold text-gray-800">
+                                        ${amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                    </span>
+                                </p>
+                            ));
+                        })()}
+                    </div>
+                </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                                <th className="p-4 font-semibold text-gray-600">Item / Booking</th>
+                                <th className="p-4 font-semibold text-gray-600 text-right">Total Cost</th>
+                                <th className="p-4 font-semibold text-gray-600 text-right">Cost Ea. (5)</th>
+                                <th className="p-4 font-semibold text-gray-600">Paid By</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {expenses.map((expense, idx) => (
+                                <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                                    <td className="p-4 font-medium text-gray-800">{expense.item}</td>
+                                    <td className="p-4 text-right text-gray-600">${expense.cost.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                                    <td className="p-4 text-right text-gray-500">${(expense.cost / 5).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                                    <td className="p-4">
+                                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                            expense.payer.includes('Jim') ? 'bg-blue-100 text-blue-800' :
+                                            expense.payer.includes('Geoff') ? 'bg-purple-100 text-purple-800' :
+                                            expense.payer.includes('Logan') ? 'bg-amber-100 text-amber-800'
+                                            : 'bg-gray-100 text-gray-800'
+                                        }`}>
+                                            {expense.payer}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const TipsView = () => {
+    return (
+        <div className="space-y-6">
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                <h3 className="text-xl font-bold text-blue-900 mb-3 flex items-center">
+                    <Sun className="w-5 h-5 mr-2 text-blue-600" /> Weather in May
+                </h3>
+                <p className="text-blue-800 leading-relaxed mb-3">
+                    May is widely considered one of the best times to visit Italy. Temperatures are generally mild and
+                    spring-like, warming up steadily as the month progresses.
+                </p>
+                <ul className="list-disc pl-5 space-y-2 text-blue-800">
+                    <li><strong>Tuscany (North/Central):</strong> Average 60&deg;F - 75&deg;F (15&deg;C - 24&deg;C).</li>
+                    <li><strong>Rome &amp; Naples (South):</strong> Averages closer to 64&deg;F - 77&deg;F (18&deg;C - 25&deg;C).</li>
+                    <li><strong>Packing:</strong> "Dress like an onion" (layers). Bring a light jacket for evenings, comfortable
+                        walking shoes, and a compact umbrella (early May can occasionally bring brief afternoon showers).</li>
+                </ul>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
+                <h3 className="text-xl font-bold text-amber-900 mb-3 flex items-center">
+                    <Train className="w-5 h-5 mr-2 text-amber-600" /> Italo Train Luggage Rules (Rome &rarr; Naples)
+                </h3>
+                <p className="text-amber-800 leading-relaxed mb-3">
+                    You booked Italo 9977. Good news: Italo trains allow you to bring luggage for <strong>free</strong> without
+                    strict weight limits.
+                </p>
+                <ul className="list-disc pl-5 space-y-2 text-amber-800">
+                    <li><strong>Smart Class limits:</strong> If you are in "Smart" class, bags must be under <strong>75 x 53 x
+                        30 cm</strong> (29.5" x 21" x 11.8") to fit in the overhead racks.</li>
+                    <li><strong>Bigger Bags:</strong> If you have massive suitcases, there are dedicated storage racks at the
+                        end of each carriage. Try to board early to snag rack space!</li>
+                    <li><strong>Security:</strong> Always keep a small bag with passports/wallets/valuables on your person or
+                        right at your seat.</li>
+                </ul>
+            </div>
+
+            <div className="bg-purple-50 border border-purple-200 rounded-xl p-6">
+                <h3 className="text-xl font-bold text-purple-900 mb-3 flex items-center">
+                    <MapPin className="w-5 h-5 mr-2 text-purple-600" /> citizenM Rome Arrival Info
+                </h3>
+                <p className="text-purple-800 leading-relaxed mb-3">
+                    The itinerary notes "check on shuttle". <strong>citizenM does not operate its own hotel shuttle</strong>.
+                </p>
+                <ul className="list-disc pl-5 space-y-2 text-purple-800">
+                    <li><strong>Location:</strong> It's beautifully situated in the historic Jewish Quarter, right on the River
+                        Tiber, looking out at Isola Tiberina.</li>
+                    <li><strong>From Termini Station:</strong> Since you arrive by train at 14:33, the easiest group option is
+                        grabbing a taxi from the official queue out front. It's only a ~4km (10-15 min) drive and should cost
+                        around &euro;15-&euro;20 total.</li>
+                    <li><strong>Public Transit option:</strong> Bus 'H' goes directly from Termini and drops you right by the
+                        hotel in about 19 minutes (&euro;2 per ticket).</li>
+                </ul>
+            </div>
+        </div>
+    );
+};
+
+const MapView = () => {
+    const mapLocations = [
+        {
+            region: "Tuscany",
+            color: "emerald",
+            places: [
+                { name: "Pisa Airport (Rental Car)", query: "Aeroporto Galileo Galilei, 56121 Pisa PI, Italy", zoom: 14, icon: Plane },
+                { name: "Casa Zia Franca (Base)", query: "Via del Giardino, 44, 55051 Barga LU, Italy", zoom: 16, icon: Home },
+                { name: "Lucca", query: "Lucca, Italy", zoom: 13, icon: MapPin },
+                { name: "Florence (Accademia)", query: "Galleria dell'Accademia, Florence, Italy", zoom: 15, icon: MapPin }
+            ]
+        },
+        {
+            region: "Rome",
+            color: "blue",
+            places: [
+                { name: "citizenM Hotel (Base)", query: "Lungotevere de' Cenci 5-8, Rome, Italy, 00186", zoom: 16, icon: Home },
+                { name: "Vatican & Basilica", query: "Vatican City", zoom: 14, icon: MapPin },
+                { name: "Colosseum", query: "Piazza del Colosseo, 1, 00184 Roma RM, Italy", zoom: 16, icon: MapPin },
+                { name: "Roma Termini (Train)", query: "Piazza dei Cinquecento 1, 00185 Rome, Italy", zoom: 16, icon: Train }
+            ]
+        },
+        {
+            region: "Campania (Naples)",
+            color: "amber",
+            places: [
+                { name: "Napoli Centrale (Train)", query: "Piazza Giuseppe Garibaldi, 80142 Naples, Italy", zoom: 15, icon: Train },
+                { name: "AirBnB Largo Ecce Homo (Base)", query: "Largo Ecce Homo 31, Naples, Campania 80134, Italy", zoom: 17, icon: Home },
+                { name: "Pompeii & Herculaneum", query: "Pompeii, Italy", zoom: 13, icon: MapPin },
+                { name: "Capri & Blue Grotto", query: "Capri, Italy", zoom: 13, icon: MapPin },
+                { name: "Amalfi Coast & Sorrento", query: "Amalfi, Italy", zoom: 10, icon: MapPin }
+            ]
+        }
+    ];
+
+    const getGroupStyles = (color) => {
+        const styles = {
+            emerald: {
+                header: 'bg-emerald-50 border-emerald-100 text-emerald-900',
+                activeBtn: 'bg-emerald-100/50 text-emerald-900',
+                activeIcon: 'bg-emerald-200 text-emerald-700'
+            },
+            blue: {
+                header: 'bg-blue-50 border-blue-100 text-blue-900',
+                activeBtn: 'bg-blue-100/50 text-blue-900',
+                activeIcon: 'bg-blue-200 text-blue-700'
+            },
+            amber: {
+                header: 'bg-amber-50 border-amber-100 text-amber-900',
+                activeBtn: 'bg-amber-100/50 text-amber-900',
+                activeIcon: 'bg-amber-200 text-amber-700'
+            }
+        };
+        return styles[color];
+    };
+
+    const [activePlace, setActivePlace] = useState(mapLocations[0].places[1]);
+
+    return (
+        <div className="flex flex-col md:flex-row gap-6 h-[700px]">
+            {/* Sidebar List */}
+            <div className="w-full md:w-1/3 flex flex-col gap-4 overflow-y-auto pr-2 hide-scrollbar">
+                {mapLocations.map((group, idx) => {
+                    const style = getGroupStyles(group.color);
+                    return (
+                        <div key={idx} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex-shrink-0">
+                            <div className={`px-4 py-3 border-b font-bold ${style.header}`}>
+                                {group.region}
+                            </div>
+                            <div className="divide-y divide-gray-100">
+                                {group.places.map((place, pIdx) => {
+                                    const isActive = activePlace.name === place.name;
+                                    const Icon = place.icon;
+                                    return (
+                                        <button key={pIdx} onClick={() => setActivePlace(place)}
+                                            className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors ${
+                                                isActive ? style.activeBtn : 'hover:bg-gray-50 text-gray-700'
+                                            }`}
+                                        >
+                                            <div className={`p-1.5 rounded-full ${isActive ? style.activeIcon : 'bg-gray-100 text-gray-500'}`}>
+                                                <Icon className="w-4 h-4" />
+                                            </div>
+                                            <span className={`text-sm ${isActive ? 'font-semibold' : 'font-medium'}`}>{place.name}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* Map Embed Area */}
+            <div className="w-full md:w-2/3 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col min-h-[400px]">
+                <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                    <div>
+                        <h3 className="font-bold text-gray-800">{activePlace.name}</h3>
+                        <p className="text-xs text-gray-500 mt-0.5">{activePlace.query}</p>
+                    </div>
+                    <MapIcon className="w-5 h-5 text-gray-400" />
+                </div>
+                <div className="flex-grow w-full h-full">
+                    <iframe title="Interactive Map View" width="100%" height="100%" style={{ border: 0 }} loading="lazy"
+                        allowFullScreen referrerPolicy="no-referrer-when-downgrade"
+                        src={`https://maps.google.com/maps?q=${encodeURIComponent(activePlace.query)}&t=&z=${activePlace.zoom}&ie=UTF8&iwloc=&output=embed`}></iframe>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(<ItineraryApp />);
+    </script>
+</body>
+</html>
