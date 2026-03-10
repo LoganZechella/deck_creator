@@ -7,6 +7,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Italy 2026">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@latest/dist/jspdf.umd.min.js"></script>
     <style>
         /* ========== Reset & Base ========== */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -475,6 +477,30 @@
                 display: block;
             }
         }
+        /* ========== PDF Save Button (desktop only) ========== */
+        .pdf-btn {
+            display: none; /* hidden on mobile by default */
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            background: #059669;
+            color: #fff;
+            border: 1px solid #047857;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s;
+            white-space: nowrap;
+            margin-left: 1rem;
+        }
+        .pdf-btn:hover { background: #047857; }
+        .pdf-btn:disabled { background: #065f46; cursor: wait; opacity: 0.8; }
+        .pdf-btn svg { width: 1.25rem; height: 1.25rem; }
+        @media (min-width: 768px) {
+            .pdf-btn { display: flex; }
+        }
+
         /* iOS Maps Toggle */
         .maps-toggle-bar {
             position: fixed;
@@ -538,6 +564,10 @@
                 <span style="display:block;font-size:1.5rem;font-weight:700">3</span>
                 <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:#a7f3d0">Cities</span>
             </div>
+            <button id="pdf-save-btn" class="pdf-btn" onclick="generatePDF()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                Save PDF
+            </button>
         </div>
     </div>
 </header>
@@ -1816,6 +1846,83 @@
 </div>
     </section>
 </div>
+
+<script>
+function generatePDF() {
+    var btn = document.getElementById('pdf-save-btn');
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.innerHTML = '<svg style="width:1.25rem;height:1.25rem;animation:spin 1s linear infinite" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle style="opacity:0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path style="opacity:0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Capturing...';
+
+    // Determine active tab
+    var tabNames = ['timeline', 'logistics', 'lodging', 'finances', 'map'];
+    var fileNames = {
+        timeline: 'Italy-2026-Daily-Itinerary',
+        logistics: 'Italy-2026-Logistics',
+        lodging: 'Italy-2026-Lodging',
+        finances: 'Italy-2026-Finances',
+        map: 'Italy-2026-Map'
+    };
+    var activeTab = 'timeline';
+    for (var i = 0; i < tabNames.length; i++) {
+        var radio = document.getElementById('tab-' + tabNames[i]);
+        if (radio && radio.checked) { activeTab = tabNames[i]; break; }
+    }
+
+    var el = document.getElementById('content-' + activeTab);
+    if (!el) { btn.disabled = false; btn.innerHTML = 'Save PDF'; return; }
+
+    // Temporarily force the tab content visible for capture
+    var origDisplay = el.style.display;
+    el.style.display = 'block';
+
+    html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#f9fafb',
+        windowWidth: el.scrollWidth
+    }).then(function(canvas) {
+        btn.innerHTML = '<svg style="width:1.25rem;height:1.25rem;animation:spin 1s linear infinite" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle style="opacity:0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path style="opacity:0.75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Building PDF...';
+
+        var jsPDF = window.jspdf.jsPDF;
+        var pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+        var pageW = 215.9, pageH = 279.4, margin = 10;
+        var usableW = pageW - 2 * margin;
+        var usableH = pageH - 2 * margin;
+        var scale = usableW / canvas.width;
+        var sliceHPx = usableH / scale;
+        var y = 0, page = 0;
+
+        while (y < canvas.height) {
+            if (page > 0) pdf.addPage();
+            var h = Math.min(sliceHPx, canvas.height - y);
+            var slice = document.createElement('canvas');
+            slice.width = canvas.width;
+            slice.height = h;
+            slice.getContext('2d').drawImage(canvas, 0, y, canvas.width, h, 0, 0, canvas.width, h);
+            pdf.addImage(slice.toDataURL('image/jpeg', 0.95), 'JPEG', margin, margin, usableW, h * scale);
+            y += h;
+            page++;
+        }
+
+        pdf.save((fileNames[activeTab] || 'Italy-2026') + '.pdf');
+        el.style.display = origDisplay;
+        btn.disabled = false;
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1.25rem;height:1.25rem"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg> Save PDF';
+    }).catch(function(err) {
+        console.error('PDF generation failed:', err);
+        el.style.display = origDisplay;
+        btn.disabled = false;
+        btn.innerHTML = 'Error — retry';
+        setTimeout(function() {
+            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1.25rem;height:1.25rem"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg> Save PDF';
+        }, 2000);
+    });
+}
+</script>
+
+<style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 
 <script>
 (function() {
