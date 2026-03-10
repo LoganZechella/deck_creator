@@ -1,0 +1,33 @@
+functionsDirectory = "/Users/logan/Git/Agents/deck_creator/netlify/functions"
+functionsDirectoryOrigin = "ui"
+plugins = []
+headers = []
+redirects = []
+
+[[edge_functions]]
+function = "authFrontend.mjs"
+path = "/authFrontend"
+
+[functions]
+
+[functions."*"]
+
+[build]
+publish = "/Users/logan/Git/Agents/deck_creator"
+publishOrigin = "default"
+edge_functions = "/Users/logan/Git/Agents/deck_creator/netlify/edge-functions"
+functions = "/Users/logan/Git/Agents/deck_creator/netlify/functions"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]

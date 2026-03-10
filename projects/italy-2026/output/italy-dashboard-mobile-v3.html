@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Zechella Family Italian Odyssey — May 2026</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Italy 2026">
+    <style>
+        /* ========== Reset & Base ========== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { -webkit-text-size-adjust: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            background: #f9fafb;
+            color: #1f2937;
+            line-height: 1.5;
+        }
+
+        /* ========== Tab System (CSS-only, iOS Safari compatible) ========== */
+        .tab-radio {
+            opacity: 0;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .tab-bar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            scrollbar-width: none;
+        }
+        .tab-bar::-webkit-scrollbar { display: none; }
+
+        .tab-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            white-space: nowrap;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: color 0.15s, border-color 0.15s;
+        }
+        .tab-label svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: #9ca3af;
+            flex-shrink: 0;
+        }
+
+        .tab-content {
+            display: none;
+            max-width: 64rem;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Show/hide content based on checked radio */
+        #tab-timeline:checked ~ #content-timeline { display: block; }
+        #tab-logistics:checked ~ #content-logistics { display: block; }
+        #tab-lodging:checked ~ #content-lodging { display: block; }
+        #tab-finances:checked ~ #content-finances { display: block; }
+        #tab-map:checked ~ #content-map { display: block; }
+
+        /* Active tab label styling */
+        #tab-timeline:checked ~ .tab-bar > .tab-label:nth-child(1) { color: #059669; border-bottom-color: #059669; }
+        #tab-logistics:checked ~ .tab-bar > .tab-label:nth-child(2) { color: #059669; border-bottom-color: #059669; }
+        #tab-lodging:checked ~ .tab-bar > .tab-label:nth-child(3) { color: #059669; border-bottom-color: #059669; }
+        #tab-finances:checked ~ .tab-bar > .tab-label:nth-child(4) { color: #059669; border-bottom-color: #059669; }
+        #tab-map:checked ~ .tab-bar > .tab-label:nth-child(5) { color: #059669; border-bottom-color: #059669; }
+
+        /* Active tab label SVG styling */
+        #tab-timeline:checked ~ .tab-bar > .tab-label:nth-child(1) svg { color: #059669; }
+        #tab-logistics:checked ~ .tab-bar > .tab-label:nth-child(2) svg { color: #059669; }
+        #tab-lodging:checked ~ .tab-bar > .tab-label:nth-child(3) svg { color: #059669; }
+        #tab-finances:checked ~ .tab-bar > .tab-label:nth-child(4) svg { color: #059669; }
+        #tab-map:checked ~ .tab-bar > .tab-label:nth-child(5) svg { color: #059669; }
+
+        /* ========== Header ========== */
+        .site-header {
+            background: #064e3b;
+            color: #fff;
+            padding: 2.5rem 1.5rem;
+        }
+        .header-inner {
+            max-width: 64rem;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+        }
+        .header-date {
+            color: #a7f3d0;
+            display: flex;
+            align-items: center;
+            margin-top: 0.25rem;
+        }
+        .header-subtitle {
+            color: #6ee7b7;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .stat-boxes {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .stat-box {
+            background: rgba(6, 78, 59, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            border: 1px solid rgba(6, 95, 70, 0.5);
+        }
+
+        /* ========== Cards (shared) ========== */
+        .card {
+            background: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .space-y > * + * {
+            margin-top: 1.5rem;
+        }
+
+        /* ========== Timeline ========== */
+        .day-card {
+            background: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .day-sidebar {
+            background: #ecfdf5;
+            padding: 1rem 1.25rem;
+            color: #064e3b;
+            flex-shrink: 0;
+            border-bottom: 1px solid #d1fae5;
+        }
+        .day-title-badge {
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: rgba(167, 243, 208, 0.5);
+            padding: 0.25rem 0.625rem;
+            border-radius: 0.375rem;
+            display: inline-block;
+            margin-top: 0.25rem;
+        }
+        .event-list > * + * {
+            margin-top: 1rem;
+        }
+        .event-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .event-icon {
+            padding: 0.5rem;
+            border-radius: 9999px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .event-icon.transit { background: #eff6ff; color: #2563eb; }
+        .event-icon.lodging { background: #faf5ff; color: #9333ea; }
+        .event-icon.activity { background: #fffbeb; color: #d97706; }
+        .event-time {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 1.5rem;
+            top: 1.5rem;
+            bottom: 1.5rem;
+            width: 2px;
+            background: #f3f4f6;
+            display: none;
+        }
+
+        /* ========== Logistics ========== */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        .flight-card {
+            background: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            padding: 1.25rem;
+        }
+        .flight-label {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #9ca3af;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+        .data-table {
+            width: 100%;
+            text-align: left;
+            border-collapse: collapse;
+        }
+        .data-table thead {
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+        }
+        .data-table th {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #6b7280;
+            letter-spacing: 0.05em;
+        }
+        .data-table tbody tr + tr {
+            border-top: 1px solid #f3f4f6;
+        }
+
+        /* ========== Lodging ========== */
+        .lodging-card {
+            background: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .lodging-sidebar {
+            padding: 1.5rem;
+            flex-shrink: 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .lodging-sidebar.tuscany { background: #ecfdf5; border-color: #d1fae5; }
+        .lodging-sidebar.rome { background: #eff6ff; border-color: #dbeafe; }
+        .lodging-sidebar.naples { background: #fffbeb; border-color: #fde68a; }
+        .conf-badge {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            display: inline-block;
+        }
+
+        /* ========== Finances ========== */
+        .finance-summary {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .summary-card-primary {
+            background: #059669;
+            color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+        }
+        .summary-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+        }
+        .payer-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.875rem;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-jim { background: #dbeafe; color: #1e40af; }
+        .badge-geoff { background: #f3e8ff; color: #6b21a8; }
+        .badge-logan { background: #fef3c7; color: #92400e; }
+
+        /* ========== Map ========== */
+        .map-grid > * + * {
+            margin-top: 1.5rem;
+        }
+        .map-region {
+            background: #fff;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+        .map-region-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: 700;
+        }
+        .map-region-header.tuscany { background: #ecfdf5; border-bottom-color: #d1fae5; color: #064e3b; }
+        .map-region-header.rome { background: #eff6ff; border-bottom-color: #dbeafe; color: #1e3a8a; }
+        .map-region-header.naples { background: #fffbeb; border-bottom-color: #fde68a; color: #78350f; }
+        .map-link {
+            display: flex;
+            padding: 0.75rem 1.25rem;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #374151;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background 0.15s;
+        }
+        .map-link:hover { background: #f9fafb; }
+        .map-link:last-child { border-bottom: none; }
+        .map-link-icon {
+            padding: 0.375rem;
+            border-radius: 9999px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .map-link-arrow {
+            margin-left: auto;
+            color: #9ca3af;
+        }
+
+        /* ========== Location Links ========== */
+        .location-link {
+            color: #059669;
+            text-decoration: underline;
+            text-decoration-color: rgba(5, 150, 105, 0.3);
+            text-underline-offset: 2px;
+            text-decoration-thickness: 1.5px;
+            transition: text-decoration-color 0.15s;
+            -webkit-tap-highlight-color: rgba(5, 150, 105, 0.1);
+        }
+        .location-link:hover { text-decoration-color: #059669; }
+
+        .location-link-inherit {
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-color: rgba(0, 0, 0, 0.2);
+            text-underline-offset: 2px;
+            text-decoration-thickness: 1.5px;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        }
+        .location-link-inherit:hover { text-decoration-color: rgba(0, 0, 0, 0.5); }
+
+        .location-address {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.125rem;
+            line-height: 1.4;
+        }
+
+        .map-link-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+            min-width: 0;
+        }
+        .map-link-details .map-link-name { font-size: 0.875rem; font-weight: 500; }
+        .map-link-details .map-link-addr { font-size: 0.75rem; color: #6b7280; line-height: 1.3; }
+
+        /* ========== Responsive (md: 768px+) ========== */
+        @media (min-width: 768px) {
+            .header-inner {
+                flex-direction: row;
+            }
+            .stat-boxes {
+                margin-top: 0;
+            }
+            .header-title {
+                font-size: 2.25rem;
+            }
+            .tab-bar {
+                max-width: 64rem;
+                margin: 0 auto;
+            }
+            .tab-content {
+                padding: 1.5rem 2rem;
+            }
+            .day-card {
+                flex-direction: row;
+            }
+            .day-sidebar {
+                width: 12rem;
+                border-bottom: 0;
+                border-right: 1px solid #d1fae5;
+                display: flex;
+                flex-direction: column;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr 1fr;
+            }
+            .grid-3 {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+            .finance-summary {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+            .lodging-card {
+                flex-direction: row;
+            }
+            .lodging-sidebar {
+                width: 16rem;
+                border-bottom: 0;
+                border-right: 1px solid #e5e7eb;
+            }
+            .timeline-line {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <div>
+            <h1 class="header-title">The Zechella Family Italian Odyssey</h1>
+            <p class="header-date">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1.25rem;height:1.25rem;margin-right:0.5rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>
+                May 1 – May 15, 2026
+            </p>
+        </div>
+        <div class="stat-boxes">
+            <div class="stat-box">
+                <span style="display:block;font-size:1.5rem;font-weight:700">5</span>
+                <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:#a7f3d0">Travelers</span>
+            </div>
+            <div class="stat-box">
+                <span style="display:block;font-size:1.5rem;font-weight:700">15</span>
+                <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:#a7f3d0">Days</span>
+            </div>
+            <div class="stat-box">
+                <span style="display:block;font-size:1.5rem;font-weight:700">3</span>
+                <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:#a7f3d0">Cities</span>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="tab-system">
+    <input type="radio" name="tabs" id="tab-timeline" class="tab-radio" checked>
+    <input type="radio" name="tabs" id="tab-logistics" class="tab-radio">
+    <input type="radio" name="tabs" id="tab-lodging" class="tab-radio">
+    <input type="radio" name="tabs" id="tab-finances" class="tab-radio">
+    <input type="radio" name="tabs" id="tab-map" class="tab-radio">
+
+    <nav class="tab-bar">
+        <label for="tab-timeline" class="tab-label">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>
+            Daily Itinerary
+        </label>
+        <label for="tab-logistics" class="tab-label">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+            Logistics
+        </label>
+        <label for="tab-lodging" class="tab-label">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+            Lodging
+        </label>
+        <label for="tab-finances" class="tab-label">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+            Finances
+        </label>
+        <label for="tab-map" class="tab-label">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z"/></svg>
+            Map View
+        </label>
+    </nav>
+
+    <section class="tab-content" id="content-timeline">
+        <div class="space-y">
+
+    <!-- Day 1: Fri, May 1 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Fri, May 1</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Cincinnati (CVG)
+                </p>
+            </div>
+            <p class="day-title-badge">Departure Day</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">21:10</span>
+                        <p style="font-size:1rem">Flight BA 120 departs <a class="location-link" href="https://maps.google.com/maps?q=Cincinnati+Northern+Kentucky+Airport+CVG" target="_blank" rel="noopener">CVG</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 2: Sat, May 2 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Sat, May 2</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Pisa / Barga
+                </p>
+            </div>
+            <p class="day-title-badge">Arrival &amp; Welcome to Tuscany</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">10:05</span>
+                        <p style="font-size:1rem">Arrive in <a class="location-link" href="https://maps.google.com/maps?q=London+Heathrow+Airport+LHR" target="_blank" rel="noopener">London (LHR)</a></p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">12:30</span>
+                        <p style="font-size:1rem">Flight BA 612 departs <a class="location-link" href="https://maps.google.com/maps?q=London+Heathrow+Airport+LHR" target="_blank" rel="noopener">LHR</a></p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">15:50</span>
+                        <p style="font-size:1rem">Arrive at <a class="location-link" href="https://maps.google.com/maps?q=Aeroporto+Galileo+Galilei%2C+56121+Pisa+PI%2C+Italy" target="_blank" rel="noopener">Pisa International Airport (PSA)</a></p>
+                        <p class="location-address">Aeroporto Galileo Galilei, 56121 Pisa PI, Italy</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0H21M3.375 14.25h17.25M3.375 14.25L6 6.75h12l2.625 7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">17:00</span>
+                        <p style="font-size:1rem">Pick up Alamo Rental Car</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon lodging">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">18:30</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827">Check-in to <a class="location-link" href="https://maps.google.com/maps?q=Via+del+Giardino%2C+44%2C+55051+Barga+LU%2C+Italy" target="_blank" rel="noopener">Casa Zia Franca</a> (Barga)</p>
+                        <p class="location-address">Via del Giardino, 44, 55051 Barga LU, Italy</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 3: Sun, May 3 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Sun, May 3</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Barga, Tuscany
+                </p>
+            </div>
+            <p class="day-title-badge">Helping Out</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon activity">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">All Day</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827">At Joy &amp; Kelly's house — help with work around the house as needed. Plans flexible, playing it by ear.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 4: Mon, May 4 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Mon, May 4</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Barga, Tuscany
+                </p>
+            </div>
+            <p class="day-title-badge">Helping Out</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon activity">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">All Day</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827">At Joy &amp; Kelly's house — continue helping out as needed. Plans flexible, playing it by ear.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 5: Tue, May 5 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Tue, May 5</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Lucca
+                </p>
+            </div>
+            <p class="day-title-badge">Culinary Delights</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon activity">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">10:00</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827"><a class="location-link" href="https://maps.google.com/maps?q=Lucca%2C+Italy" target="_blank" rel="noopener">Lucca</a> Cook with Momma (3 hours)</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon activity">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">Afternoon</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827">Winery with Kings (TBD)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 6: Wed, May 6 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Wed, May 6</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Florence
+                </p>
+            </div>
+            <p class="day-title-badge">Best of Florence</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0H21M3.375 14.25h17.25M3.375 14.25L6 6.75h12l2.625 7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">Morning</span>
+                        <p style="font-size:1rem">44 min drive from Barga to <a class="location-link" href="https://maps.google.com/maps?q=Lucca%2C+Italy" target="_blank" rel="noopener">Lucca</a></p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4h8l2 6H6l2-6ZM6 10v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6M9 18l-2 3M15 18l2 3M9.5 14h.01M14.5 14h.01"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">09:31</span>
+                        <p style="font-size:1rem">Train from <a class="location-link" href="https://maps.google.com/maps?q=Stazione+di+Lucca%2C+Lucca%2C+Italy" target="_blank" rel="noopener">Lucca</a> to <a class="location-link" href="https://maps.google.com/maps?q=Firenze+Santa+Maria+Novella%2C+Florence%2C+Italy" target="_blank" rel="noopener">Florence</a>, arrive 10:52 (Regionale 18509)</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon activity">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">14:15</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827">Best of Florence Tour: David, <a class="location-link" href="https://maps.google.com/maps?q=Galleria+dell%27Accademia%2C+Florence%2C+Italy" target="_blank" rel="noopener">Accademia</a> w/ Duomo (3.5 hrs)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 7: Thu, May 7 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Thu, May 7</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Pisa to Rome
+                </p>
+            </div>
+            <p class="day-title-badge">Journey to Rome</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0H21M3.375 14.25h17.25M3.375 14.25L6 6.75h12l2.625 7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">10:00</span>
+                        <p style="font-size:1rem">Drop off Alamo Rental Car at <a class="location-link" href="https://maps.google.com/maps?q=Aeroporto+Galileo+Galilei%2C+56121+Pisa+PI%2C+Italy" target="_blank" rel="noopener">PSA Airport</a></p>
+                        <p class="location-address">Aeroporto Galileo Galilei, 56121 Pisa PI, Italy</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4h8l2 6H6l2-6ZM6 10v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6M9 18l-2 3M15 18l2 3M9.5 14h.01M14.5 14h.01"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">11:11</span>
+                        <p style="font-size:1rem">Train to <a class="location-link" href="https://maps.google.com/maps?q=Piazza+dei+Cinquecento+1%2C+00185+Rome%2C+Italy" target="_blank" rel="noopener">Rome</a>: Intercity 505 (Seats: 7A, 7C, 7D, 8C, 8D)</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4h8l2 6H6l2-6ZM6 10v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6M9 18l-2 3M15 18l2 3M9.5 14h.01M14.5 14h.01"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">14:33</span>
+                        <p style="font-size:1rem">Arrive at <a class="location-link" href="https://maps.google.com/maps?q=Piazza+dei+Cinquecento+1%2C+00185+Rome%2C+Italy" target="_blank" rel="noopener">Roma Termini</a></p>
+                        <p class="location-address">Piazza dei Cinquecento 1, 00185 Rome, Italy</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon lodging">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">15:30</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827">Check-in to <a class="location-link" href="https://maps.google.com/maps?q=Lungotevere+de%27+Cenci+5-8%2C+Rome%2C+Italy%2C+00186" target="_blank" rel="noopener">citizenM Rome Isola Tiberina</a></p>
+                        <p class="location-address">Lungotevere de' Cenci 5-8, Rome, Italy, 00186</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon activity">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">19:00</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827">Golf Cart Tour of Rome (2.5 hrs)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 8: Fri, May 8 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Fri, May 8</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Rome
+                </p>
+            </div>
+            <p class="day-title-badge">The Vatican</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon activity">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">10:30</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827"><a class="location-link" href="https://maps.google.com/maps?q=Vatican+City" target="_blank" rel="noopener">Vatican</a> &amp; Basilica Tour (2.5 hrs)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 9: Sat, May 9 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Sat, May 9</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Rome
+                </p>
+            </div>
+            <p class="day-title-badge">Ancient Rome</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon activity">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">10:30</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827"><a class="location-link" href="https://maps.google.com/maps?q=Piazza+del+Colosseo%2C+1%2C+00184+Roma+RM%2C+Italy" target="_blank" rel="noopener">Colosseum</a> Tour (3 hrs)</p>
+                        <p class="location-address">Piazza del Colosseo, 1, 00184 Roma RM, Italy</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 10: Sun, May 10 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Sun, May 10</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Rome to Naples
+                </p>
+            </div>
+            <p class="day-title-badge">South to Naples</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0H21M3.375 14.25h17.25M3.375 14.25L6 6.75h12l2.625 7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">12:30</span>
+                        <p style="font-size:1rem">Taxi/Uber to <a class="location-link" href="https://maps.google.com/maps?q=Piazza+dei+Cinquecento+1%2C+00185+Rome%2C+Italy" target="_blank" rel="noopener">Roma Termini</a> (15 min ride)</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4h8l2 6H6l2-6ZM6 10v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6M9 18l-2 3M15 18l2 3M9.5 14h.01M14.5 14h.01"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">13:40</span>
+                        <p style="font-size:1rem">Train to <a class="location-link" href="https://maps.google.com/maps?q=Piazza+Giuseppe+Garibaldi%2C+80142+Naples%2C+Italy" target="_blank" rel="noopener">Naples</a>: Italo 9977 (Carriage #2, Seats 8-12)</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4h8l2 6H6l2-6ZM6 10v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6M9 18l-2 3M15 18l2 3M9.5 14h.01M14.5 14h.01"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">14:53</span>
+                        <p style="font-size:1rem">Arrive at <a class="location-link" href="https://maps.google.com/maps?q=Piazza+Giuseppe+Garibaldi%2C+80142+Naples%2C+Italy" target="_blank" rel="noopener">Napoli Centrale</a></p>
+                        <p class="location-address">Piazza Giuseppe Garibaldi, 80142 Naples, Italy</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0H21M3.375 14.25h17.25M3.375 14.25L6 6.75h12l2.625 7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">15:15</span>
+                        <p style="font-size:1rem">Uber to <a class="location-link" href="https://maps.google.com/maps?q=Largo+Ecce+Homo+31%2C+Naples%2C+Campania+80134%2C+Italy" target="_blank" rel="noopener">AirBnB Largo Ecce Homo 31</a></p>
+                        <p class="location-address">Largo Ecce Homo 31, ex Vico Santa Maria dell'Aiuto 1, Naples, 80134</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon lodging">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">15:30</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827">Check-in to <a class="location-link" href="https://maps.google.com/maps?q=Largo+Ecce+Homo+31%2C+Naples%2C+Campania+80134%2C+Italy" target="_blank" rel="noopener">Naples AirBnB</a></p>
+                        <p class="location-address">Largo Ecce Homo 31, ex Vico Santa Maria dell'Aiuto 1, Naples, 80134</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 11: Mon, May 11 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Mon, May 11</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Pompeii
+                </p>
+            </div>
+            <p class="day-title-badge">Frozen in Time</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon activity">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">09:20</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827"><a class="location-link" href="https://maps.google.com/maps?q=Pompeii%2C+Italy" target="_blank" rel="noopener">Pompeii</a> &amp; Herculaneum Bus Tour (7 hrs) - Departs near train station</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 12: Tue, May 12 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Tue, May 12</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Capri
+                </p>
+            </div>
+            <p class="day-title-badge">Island Escape</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon activity">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">08:00</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827"><a class="location-link" href="https://maps.google.com/maps?q=Capri%2C+Italy" target="_blank" rel="noopener">Capri</a> &amp; Blue Grotto Tour (9 hrs) - Walk to port/dock</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 13: Wed, May 13 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Wed, May 13</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Amalfi Coast
+                </p>
+            </div>
+            <p class="day-title-badge">The Stunning Coast</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon activity">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">08:30</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827"><a class="location-link" href="https://maps.google.com/maps?q=Amalfi%2C+Italy" target="_blank" rel="noopener">Amalfi</a> Coast &amp; Sorrento Tour (8 hrs) - Departs near train station</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 14: Thu, May 14 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Thu, May 14</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Naples
+                </p>
+            </div>
+            <p class="day-title-badge">Napoli Local</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon activity">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">All Day</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827">Tour Naples on your own. Enjoy pizza and coastal views!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Day 15: Fri, May 15 -->
+    <div class="day-card">
+        <div class="day-sidebar">
+            <div>
+                <p style="font-weight:700;font-size:1.125rem">Fri, May 15</p>
+                <p style="color:#047857;font-size:0.875rem;margin-top:0.25rem;display:flex;align-items:center;gap:0.25rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:0.75rem;height:0.75rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                    Naples to CVG
+                </p>
+            </div>
+            <p class="day-title-badge">Journey Home</p>
+        </div>
+        <div style="padding:1rem;flex-grow:1;position:relative">
+            <div class="timeline-line"></div>
+            <div class="event-list">
+                <div class="event-item">
+                    <div class="event-icon lodging">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">10:00</span>
+                        <p style="font-size:1rem;font-weight:500;color:#111827">Check-out of <a class="location-link" href="https://maps.google.com/maps?q=Largo+Ecce+Homo+31%2C+Naples%2C+Campania+80134%2C+Italy" target="_blank" rel="noopener">Naples AirBnB</a></p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0H21M3.375 14.25h17.25M3.375 14.25L6 6.75h12l2.625 7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">12:30</span>
+                        <p style="font-size:1rem">20-min car ride to <a class="location-link" href="https://maps.google.com/maps?q=Naples+International+Airport+NAP+Italy" target="_blank" rel="noopener">Naples Airport</a></p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">15:00</span>
+                        <p style="font-size:1rem">Flight BA 1578 departs <a class="location-link" href="https://maps.google.com/maps?q=Naples+International+Airport+NAP+Italy" target="_blank" rel="noopener">Naples</a></p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">18:55</span>
+                        <p style="font-size:1rem">Arrive in <a class="location-link" href="https://maps.google.com/maps?q=Chicago+O%27Hare+Airport+ORD" target="_blank" rel="noopener">Chicago (CHI)</a></p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">20:56</span>
+                        <p style="font-size:1rem">Flight BA 5160 departs <a class="location-link" href="https://maps.google.com/maps?q=Chicago+O%27Hare+Airport+ORD" target="_blank" rel="noopener">Chicago</a></p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-icon transit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                    </div>
+                    <div>
+                        <span class="event-time">23:56</span>
+                        <p style="font-size:1rem">Arrive safely at <a class="location-link" href="https://maps.google.com/maps?q=Cincinnati+Northern+Kentucky+Airport+CVG" target="_blank" rel="noopener">CVG</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+    </section>
+
+    <section class="tab-content" id="content-logistics">
+        <div class="space-y" style="--space:2rem">
+
+    <!-- Flights -->
+    <div>
+        <h2 class="section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2563eb" style="width:1.5rem;height:1.5rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+            Flights (British Airways)
+        </h2>
+        <div class="grid-2">
+            <!-- Outbound -->
+            <div class="flight-card">
+                <div class="flight-label">Outbound &bull; Thu, May 1 &ndash; Fri, May 2</div>
+                <div style="display:flex;flex-direction:column;gap:0.75rem">
+                    <div style="padding-bottom:0.75rem;border-bottom:1px solid #f3f4f6">
+                        <p style="font-weight:700;font-size:1.125rem">BA 120</p>
+                        <p style="font-size:0.875rem;color:#6b7280"><a class="location-link" href="https://maps.google.com/maps?q=Cincinnati+Northern+Kentucky+Airport+CVG" target="_blank" rel="noopener">CVG</a> (21:10) &rarr; <a class="location-link" href="https://maps.google.com/maps?q=London+Heathrow+Airport+LHR" target="_blank" rel="noopener">LHR</a> (10:05)</p>
+                    </div>
+                    <div>
+                        <p style="font-weight:700;font-size:1.125rem">BA 612</p>
+                        <p style="font-size:0.875rem;color:#6b7280"><a class="location-link" href="https://maps.google.com/maps?q=London+Heathrow+Airport+LHR" target="_blank" rel="noopener">LHR</a> (12:30) &rarr; <a class="location-link" href="https://maps.google.com/maps?q=Aeroporto+Galileo+Galilei%2C+56121+Pisa+PI%2C+Italy" target="_blank" rel="noopener">PSA</a> (15:50)</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Return -->
+            <div class="flight-card">
+                <div class="flight-label">Return &bull; Fri, May 15</div>
+                <div style="display:flex;flex-direction:column;gap:0.75rem">
+                    <div style="padding-bottom:0.75rem;border-bottom:1px solid #f3f4f6">
+                        <p style="font-weight:700;font-size:1.125rem">BA 1578</p>
+                        <p style="font-size:0.875rem;color:#6b7280"><a class="location-link" href="https://maps.google.com/maps?q=Naples+International+Airport+NAP+Italy" target="_blank" rel="noopener">Naples</a> (15:00) &rarr; <a class="location-link" href="https://maps.google.com/maps?q=Chicago+O%27Hare+Airport+ORD" target="_blank" rel="noopener">Chicago</a> (18:55)</p>
+                    </div>
+                    <div>
+                        <p style="font-weight:700;font-size:1.125rem">BA 5160</p>
+                        <p style="font-size:0.875rem;color:#6b7280"><a class="location-link" href="https://maps.google.com/maps?q=Chicago+O%27Hare+Airport+ORD" target="_blank" rel="noopener">Chicago</a> (20:56) &rarr; <a class="location-link" href="https://maps.google.com/maps?q=Cincinnati+Northern+Kentucky+Airport+CVG" target="_blank" rel="noopener">CVG</a> (23:56)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trains Booked -->
+    <div>
+        <h2 class="section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#059669" style="width:1.5rem;height:1.5rem"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+            Trains Booked
+        </h2>
+        <div class="card" style="overflow:hidden">
+            <div style="overflow-x:auto">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Route</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="white-space:nowrap">Wed, May 6</td>
+                            <td>
+                                <a class="location-link" href="https://maps.google.com/maps?q=Stazione+di+Lucca%2C+Lucca%2C+Italy" target="_blank" rel="noopener"><strong>Stazione di Lucca</strong></a> &rarr; <a class="location-link" href="https://maps.google.com/maps?q=Firenze+Santa+Maria+Novella%2C+Florence%2C+Italy" target="_blank" rel="noopener"><strong>Firenze SMN</strong></a>
+                                <p style="font-size:0.7rem;color:#6b7280;margin-top:0.25rem">Lucca, Italy &rarr; Piazza della Stazione, Florence</p>
+                            </td>
+                            <td style="font-size:0.875rem;color:#4b5563">
+                                09:31 &ndash; 10:52 (1h21m)<br>
+                                Regionale 18509
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space:nowrap">Thu, May 7</td>
+                            <td>
+                                <a class="location-link" href="https://maps.google.com/maps?q=Pisa+Centrale+Station%2C+Pisa%2C+Italy" target="_blank" rel="noopener"><strong>Pisa Centrale</strong></a> &rarr; <a class="location-link" href="https://maps.google.com/maps?q=Piazza+dei+Cinquecento+1%2C+00185+Rome%2C+Italy" target="_blank" rel="noopener"><strong>Roma Termini</strong></a>
+                                <p style="font-size:0.7rem;color:#6b7280;margin-top:0.25rem">Pisa, Italy &rarr; Piazza dei Cinquecento 1, 00185 Rome</p>
+                            </td>
+                            <td style="font-size:0.875rem;color:#4b5563">
+                                11:11 - 14:33 (3h22m)<br>
+                                Intercity 505 | Seats: 7A, 7C, 7D, 8C, 8D
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="white-space:nowrap">Sun, May 10</td>
+                            <td>
+                                <a class="location-link" href="https://maps.google.com/maps?q=Piazza+dei+Cinquecento+1%2C+00185+Rome%2C+Italy" target="_blank" rel="noopener"><strong>Roma Termini</strong></a> &rarr; <a class="location-link" href="https://maps.google.com/maps?q=Piazza+Giuseppe+Garibaldi%2C+80142+Naples%2C+Italy" target="_blank" rel="noopener"><strong>Napoli Centrale</strong></a>
+                                <p style="font-size:0.7rem;color:#6b7280;margin-top:0.25rem">Piazza dei Cinquecento 1, Rome &rarr; Piazza Giuseppe Garibaldi, Naples</p>
+                            </td>
+                            <td style="font-size:0.875rem;color:#4b5563">
+                                13:40 - 14:53 (1h13m)<br>
+                                Italo 9977 | Carriage 2, Seats: 8, 9, 10, 11, 12
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Car Rental -->
+    <div>
+        <h2 class="section-title">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#f59e0b" style="width:1.5rem;height:1.5rem"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0H21M3.375 14.25h17.25M3.375 14.25A1.125 1.125 0 0 0 2.25 15.375v2.25c0 .621.504 1.125 1.125 1.125m0-3.75V7.5A2.25 2.25 0 0 1 5.625 5.25h12.75A2.25 2.25 0 0 1 20.625 7.5v6.75"/></svg>
+            Car Rental
+        </h2>
+        <div class="card" style="display:flex;flex-direction:column;overflow:hidden">
+            <div style="background:#fffbeb;padding:1rem 1.25rem;border-bottom:1px solid #fde68a">
+                <h3 style="font-weight:700;font-size:1.25rem;color:#78350f;margin-bottom:0.25rem">Alamo</h3>
+                <p style="font-family:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;font-size:0.75rem;color:#92400e;background:rgba(254,243,199,0.5);padding:0.25rem 0.5rem;border-radius:0.25rem;display:inline-block">Conf #758381187</p>
+            </div>
+            <div style="padding:1.25rem">
+                <div class="grid-2">
+                    <div>
+                        <p style="font-size:0.75rem;color:#6b7280;text-transform:uppercase;font-weight:700;letter-spacing:0.05em;margin-bottom:0.25rem">Pickup</p>
+                        <p style="font-weight:600;color:#1f2937">Sat, May 2 @ 17:00</p>
+                        <p style="font-size:0.875rem;color:#4b5563;margin-top:0.25rem"><a class="location-link" href="https://maps.google.com/maps?q=Aeroporto+Galileo+Galilei%2C+56121+Pisa+PI%2C+Italy" target="_blank" rel="noopener">Pisa International Airport</a></p>
+                        <p style="font-size:0.75rem;color:#6b7280;margin-top:0.125rem">Aeroporto Galileo Galilei, 56121 Pisa PI</p>
+                    </div>
+                    <div>
+                        <p style="font-size:0.75rem;color:#6b7280;text-transform:uppercase;font-weight:700;letter-spacing:0.05em;margin-bottom:0.25rem">Drop-off</p>
+                        <p style="font-weight:600;color:#1f2937">Thu, May 7 @ 10:00</p>
+                        <p style="font-size:0.875rem;color:#4b5563;margin-top:0.25rem"><a class="location-link" href="https://maps.google.com/maps?q=Aeroporto+Galileo+Galilei%2C+56121+Pisa+PI%2C+Italy" target="_blank" rel="noopener">Pisa International Airport</a></p>
+                        <p style="font-size:0.75rem;color:#6b7280;margin-top:0.125rem">Aeroporto Galileo Galilei, 56121 Pisa PI</p>
+                    </div>
+                </div>
+                <div style="padding-top:0.75rem;border-top:1px solid #f3f4f6;margin-top:0.75rem">
+                    <p style="font-size:0.875rem;color:#6b7280">
+                        <strong>Cost Included:</strong> $384 (5-day rental) + $55 (additional driver) + $72 (full coverage) = $514 total.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+    </section>
+
+    <section class="tab-content" id="content-lodging">
+        <div class="space-y">
+
+    <!-- Barga (Tuscany) -->
+    <div class="lodging-card">
+        <div class="lodging-sidebar tuscany" style="display:flex;flex-direction:column;justify-content:center">
+            <p style="color:#059669;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;font-size:0.75rem;margin-bottom:0.25rem">Barga (Tuscany)</p>
+            <h3 style="font-size:1.25rem;font-weight:700;color:#064e3b;line-height:1.3"><a class="location-link-inherit" href="https://maps.google.com/maps?q=Via+del+Giardino%2C+44%2C+55051+Barga+LU%2C+Italy" target="_blank" rel="noopener">Casa Zia Franca AirBnB</a></h3>
+        </div>
+        <div style="padding:1.5rem;flex-grow:1;display:grid;grid-template-columns:1fr;gap:1rem">
+            <div style="display:flex;align-items:flex-start;gap:0.75rem">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#9ca3af" style="width:1.25rem;height:1.25rem;flex-shrink:0;margin-top:0.125rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>
+                <div>
+                    <p style="font-weight:600;color:#1f2937">Sat, May 2 &ndash; Thu, May 7</p>
+                    <div style="font-size:0.875rem;color:#6b7280;margin-top:0.25rem">
+                        <p>In: 15:00</p>
+                        <p>Out: 11:00</p>
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:0.75rem">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#9ca3af" style="width:1.25rem;height:1.25rem;flex-shrink:0;margin-top:0.125rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                <div>
+                    <p style="font-weight:500;color:#1f2937;font-size:0.875rem;line-height:1.6"><a class="location-link" href="https://maps.google.com/maps?q=Via+del+Giardino%2C+44%2C+55051+Barga+LU%2C+Italy" target="_blank" rel="noopener">Via del Giardino, 44, 55051 Barga LU, Italy</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rome -->
+    <div class="lodging-card">
+        <div class="lodging-sidebar rome" style="display:flex;flex-direction:column;justify-content:center">
+            <p style="color:#2563eb;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;font-size:0.75rem;margin-bottom:0.25rem">Rome</p>
+            <h3 style="font-size:1.25rem;font-weight:700;color:#1e3a8a;line-height:1.3"><a class="location-link-inherit" href="https://maps.google.com/maps?q=Lungotevere+de%27+Cenci+5-8%2C+Rome%2C+Italy%2C+00186" target="_blank" rel="noopener">citizenM Rome Isola Tiberina</a></h3>
+            <p class="conf-badge" style="margin-top:0.5rem;background:rgba(191,219,254,0.5);color:#1e40af">Conf: #99566483</p>
+        </div>
+        <div style="padding:1.5rem;flex-grow:1;display:grid;grid-template-columns:1fr;gap:1rem">
+            <div style="display:flex;align-items:flex-start;gap:0.75rem">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#9ca3af" style="width:1.25rem;height:1.25rem;flex-shrink:0;margin-top:0.125rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>
+                <div>
+                    <p style="font-weight:600;color:#1f2937">Thu, May 7 &ndash; Sun, May 10</p>
+                    <div style="font-size:0.875rem;color:#6b7280;margin-top:0.25rem">
+                        <p>In: 14:00</p>
+                        <p>Out: 11:00</p>
+                        <p style="font-size:0.75rem;color:#9ca3af;margin-top:0.25rem;font-style:italic">Luggage stored at front desk until departure</p>
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:0.75rem">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#9ca3af" style="width:1.25rem;height:1.25rem;flex-shrink:0;margin-top:0.125rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                <div>
+                    <p style="font-weight:500;color:#1f2937;font-size:0.875rem;line-height:1.6"><a class="location-link" href="https://maps.google.com/maps?q=Lungotevere+de%27+Cenci+5-8%2C+Rome%2C+Italy%2C+00186" target="_blank" rel="noopener">Lungotevere de' Cenci 5-8, Rome, Italy, 00186</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Naples -->
+    <div class="lodging-card">
+        <div class="lodging-sidebar naples" style="display:flex;flex-direction:column;justify-content:center">
+            <p style="color:#d97706;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;font-size:0.75rem;margin-bottom:0.25rem">Naples</p>
+            <h3 style="font-size:1.25rem;font-weight:700;color:#78350f;line-height:1.3"><a class="location-link-inherit" href="https://maps.google.com/maps?q=Largo+Ecce+Homo+31%2C+Naples%2C+Campania+80134%2C+Italy" target="_blank" rel="noopener">Largo Ecce Homo AirBnB</a></h3>
+        </div>
+        <div style="padding:1.5rem;flex-grow:1;display:grid;grid-template-columns:1fr;gap:1rem">
+            <div style="display:flex;align-items:flex-start;gap:0.75rem">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#9ca3af" style="width:1.25rem;height:1.25rem;flex-shrink:0;margin-top:0.125rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>
+                <div>
+                    <p style="font-weight:600;color:#1f2937">Sun, May 10 &ndash; Fri, May 15</p>
+                    <div style="font-size:0.875rem;color:#6b7280;margin-top:0.25rem">
+                        <p>In: 15:00</p>
+                        <p>Out: 10:00</p>
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:0.75rem">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#9ca3af" style="width:1.25rem;height:1.25rem;flex-shrink:0;margin-top:0.125rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                <div>
+                    <p style="font-weight:500;color:#1f2937;font-size:0.875rem;line-height:1.6"><a class="location-link" href="https://maps.google.com/maps?q=Largo+Ecce+Homo+31%2C+Naples%2C+Campania+80134%2C+Italy" target="_blank" rel="noopener">Largo Ecce Homo 31, ex Vico Santa Maria dell'Aiuto 1, Naples, 80134</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+    </section>
+
+    <section class="tab-content" id="content-finances">
+        <div>
+
+    <!-- Summary Cards -->
+    <div class="finance-summary">
+        <!-- Total -->
+        <div class="summary-card-primary">
+            <h3 style="color:#a7f3d0;font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.25rem">Total Trip Bookings</h3>
+            <p style="font-size:1.875rem;font-weight:700">$11,994.50</p>
+            <p style="font-size:0.875rem;margin-top:0.5rem;color:#a7f3d0;opacity:0.9">*Excluding flights &amp; daily meals</p>
+        </div>
+        <!-- Avg Per Person -->
+        <div class="summary-card" style="display:flex;flex-direction:column;justify-content:center">
+            <h3 style="color:#6b7280;font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.25rem">Avg Per Person (5)</h3>
+            <p style="font-size:1.875rem;font-weight:700;color:#1f2937">$2,398.90</p>
+        </div>
+        <!-- Payer Breakdown -->
+        <div class="summary-card" style="display:flex;flex-direction:column;justify-content:center">
+            <h3 style="color:#6b7280;font-size:0.875rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem">Payer Breakdown</h3>
+            <div style="display:flex;flex-direction:column;gap:0.25rem">
+                <div class="payer-row">
+                    <span style="color:#4b5563">Jim:</span>
+                    <span style="font-weight:600;color:#1f2937">$5,071.05</span>
+                </div>
+                <div class="payer-row">
+                    <span style="color:#4b5563">Geoff:</span>
+                    <span style="font-weight:600;color:#1f2937">$4,814.45</span>
+                </div>
+                <div class="payer-row">
+                    <span style="color:#4b5563">Logan:</span>
+                    <span style="font-weight:600;color:#1f2937">$2,109.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expense Table -->
+    <div class="card" style="overflow:hidden">
+        <div style="overflow-x:auto">
+            <table class="data-table" style="font-size:0.875rem">
+                <thead>
+                    <tr>
+                        <th>Item / Booking</th>
+                        <th style="text-align:right">Total Cost</th>
+                        <th style="text-align:right">Cost Ea. (5)</th>
+                        <th>Paid By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Alamo Car Rental</td>
+                        <td style="text-align:right;color:#4b5563">$514.00</td>
+                        <td style="text-align:right;color:#6b7280">$102.80</td>
+                        <td><span class="badge badge-jim">Jim</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Barga AirBnB</td>
+                        <td style="text-align:right;color:#4b5563">$1,615.00</td>
+                        <td style="text-align:right;color:#6b7280">$323.00</td>
+                        <td><span class="badge badge-geoff">Geoff</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Lucca Cooking Class</td>
+                        <td style="text-align:right;color:#4b5563">$1,862.50</td>
+                        <td style="text-align:right;color:#6b7280">$372.50</td>
+                        <td><span class="badge badge-jim">Jim</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Train: Lucca to Florence</td>
+                        <td style="text-align:right;color:#4b5563">$54.00</td>
+                        <td style="text-align:right;color:#6b7280">$10.80</td>
+                        <td><span class="badge badge-logan">Logan</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Florence Best-of Tour</td>
+                        <td style="text-align:right;color:#4b5563">$546.70</td>
+                        <td style="text-align:right;color:#6b7280">$109.34</td>
+                        <td><span class="badge badge-jim">Jim</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Train: Pisa to Rome</td>
+                        <td style="text-align:right;color:#4b5563">$233.00</td>
+                        <td style="text-align:right;color:#6b7280">$46.60</td>
+                        <td><span class="badge badge-logan">Logan</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Rome citizenM Hotel</td>
+                        <td style="text-align:right;color:#4b5563">$400.00</td>
+                        <td style="text-align:right;color:#6b7280">$80.00</td>
+                        <td><span class="badge badge-jim">Jim</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Rome Golf Cart Tour</td>
+                        <td style="text-align:right;color:#4b5563">$532.00</td>
+                        <td style="text-align:right;color:#6b7280">$106.40</td>
+                        <td><span class="badge badge-geoff">Geoff</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Vatican Tour</td>
+                        <td style="text-align:right;color:#4b5563">$780.00</td>
+                        <td style="text-align:right;color:#6b7280">$156.00</td>
+                        <td><span class="badge badge-jim">Jim</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Colosseum Tour</td>
+                        <td style="text-align:right;color:#4b5563">$1,203.00</td>
+                        <td style="text-align:right;color:#6b7280">$240.60</td>
+                        <td><span class="badge badge-geoff">Geoff</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Train: Rome to Naples</td>
+                        <td style="text-align:right;color:#4b5563">$200.00</td>
+                        <td style="text-align:right;color:#6b7280">$40.00</td>
+                        <td><span class="badge badge-logan">Logan</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Naples AirBnB</td>
+                        <td style="text-align:right;color:#4b5563">$1,622.00</td>
+                        <td style="text-align:right;color:#6b7280">$324.40</td>
+                        <td><span class="badge badge-logan">Logan</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Pompeii Bus Tour</td>
+                        <td style="text-align:right;color:#4b5563">$920.00</td>
+                        <td style="text-align:right;color:#6b7280">$184.00</td>
+                        <td><span class="badge badge-geoff">Geoff</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Capri / Blue Grotto</td>
+                        <td style="text-align:right;color:#4b5563">$967.85</td>
+                        <td style="text-align:right;color:#6b7280">$193.57</td>
+                        <td><span class="badge badge-jim">Jim</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:500;color:#1f2937">Amalfi / Sorrento Tour</td>
+                        <td style="text-align:right;color:#4b5563">$544.45</td>
+                        <td style="text-align:right;color:#6b7280">$108.89</td>
+                        <td><span class="badge badge-geoff">Geoff</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+    </section>
+
+    <section class="tab-content" id="content-map">
+        <div class="map-grid">
+
+    <!-- Travel to Italy -->
+    <div class="map-region">
+        <div class="map-region-header" style="background:#f3f4f6;border-bottom-color:#e5e7eb;color:#374151">Travel to Italy</div>
+        <div>
+            <a href="https://maps.google.com/maps?q=Cincinnati+Northern+Kentucky+Airport+CVG" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#e5e7eb;color:#374151">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Cincinnati/Northern Kentucky Airport (CVG)</span>
+                    <span class="map-link-addr">3087 Terminal Dr, Hebron, KY 41048</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=London+Heathrow+Airport+LHR" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#e5e7eb;color:#374151">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">London Heathrow Airport (LHR)</span>
+                    <span class="map-link-addr">Longford, TW6, United Kingdom</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Aeroporto+Galileo+Galilei%2C+56121+Pisa+PI%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#e5e7eb;color:#374151">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Pisa International Airport (PSA)</span>
+                    <span class="map-link-addr">Aeroporto Galileo Galilei, 56121 Pisa PI, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Tuscany -->
+    <div class="map-region">
+        <div class="map-region-header tuscany">Tuscany</div>
+        <div>
+            <a href="https://maps.google.com/maps?q=Aeroporto+Galileo+Galilei%2C+56121+Pisa+PI%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#d1fae5;color:#047857">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Pisa International Airport (Rental Car)</span>
+                    <span class="map-link-addr">Aeroporto Galileo Galilei, 56121 Pisa PI, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Via+del+Giardino%2C+44%2C+55051+Barga+LU%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#d1fae5;color:#047857">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Casa Zia Franca (Base)</span>
+                    <span class="map-link-addr">Via del Giardino, 44, 55051 Barga LU, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=55100+Lucca%2C+Province+of+Lucca%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#d1fae5;color:#047857">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Lucca (Cooking Class)</span>
+                    <span class="map-link-addr">55100 Lucca, Province of Lucca, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Galleria+dell%27Accademia%2C+Via+Ricasoli+58%2C+50122+Florence%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#d1fae5;color:#047857">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Galleria dell'Accademia (Florence)</span>
+                    <span class="map-link-addr">Via Ricasoli 58/60, 50122 Florence, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Stazione+di+Lucca%2C+Piazzale+Ricasoli%2C+55100+Lucca%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#d1fae5;color:#047857">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Stazione di Lucca (Train)</span>
+                    <span class="map-link-addr">Piazzale Bettino Ricasoli, 55100 Lucca, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Firenze+Santa+Maria+Novella%2C+Piazza+della+Stazione%2C+50123+Florence%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#d1fae5;color:#047857">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Firenze Santa Maria Novella (Train)</span>
+                    <span class="map-link-addr">Piazza della Stazione, 50123 Florence, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Pisa+Centrale%2C+Piazza+della+Stazione%2C+56125+Pisa%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#d1fae5;color:#047857">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Pisa Centrale (Train)</span>
+                    <span class="map-link-addr">Piazza della Stazione, 56125 Pisa, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Rome -->
+    <div class="map-region">
+        <div class="map-region-header rome">Rome</div>
+        <div>
+            <a href="https://maps.google.com/maps?q=Lungotevere+de%27+Cenci+5-8%2C+Rome%2C+Italy%2C+00186" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#bfdbfe;color:#1d4ed8">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">citizenM Rome Isola Tiberina (Base)</span>
+                    <span class="map-link-addr">Lungotevere de' Cenci 5-8, Rome, Italy, 00186</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Piazza+San+Pietro%2C+Vatican+City" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#bfdbfe;color:#1d4ed8">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Vatican &amp; Basilica</span>
+                    <span class="map-link-addr">Piazza San Pietro, Vatican City</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Piazza+del+Colosseo%2C+1%2C+00184+Roma+RM%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#bfdbfe;color:#1d4ed8">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Colosseum</span>
+                    <span class="map-link-addr">Piazza del Colosseo, 1, 00184 Roma RM, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Piazza+dei+Cinquecento+1%2C+00185+Rome%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#bfdbfe;color:#1d4ed8">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Roma Termini (Train)</span>
+                    <span class="map-link-addr">Piazza dei Cinquecento 1, 00185 Rome, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Campania (Naples) -->
+    <div class="map-region">
+        <div class="map-region-header naples">Campania (Naples)</div>
+        <div>
+            <a href="https://maps.google.com/maps?q=Piazza+Giuseppe+Garibaldi%2C+80142+Naples%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#fde68a;color:#b45309">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Napoli Centrale (Train)</span>
+                    <span class="map-link-addr">Piazza Giuseppe Garibaldi, 80142 Naples, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Largo+Ecce+Homo+31%2C+Naples%2C+Campania+80134%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#fde68a;color:#b45309">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955a1.126 1.126 0 0 1 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">AirBnB Largo Ecce Homo (Base)</span>
+                    <span class="map-link-addr">Largo Ecce Homo 31, ex Vico Santa Maria dell'Aiuto 1, Naples, 80134</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Piazza+Giuseppe+Garibaldi%2C+80142+Naples%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#fde68a;color:#b45309">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Pompeii &amp; Herculaneum (Departs Napoli Centrale)</span>
+                    <span class="map-link-addr">Piazza Giuseppe Garibaldi, 80142 Naples, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Molo+Beverello%2C+80133+Napoli+NA%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#fde68a;color:#b45309">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Capri &amp; Blue Grotto (Departs Molo Beverello)</span>
+                    <span class="map-link-addr">Molo Beverello, 80133 Napoli NA, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Piazza+Giuseppe+Garibaldi%2C+80142+Naples%2C+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#fde68a;color:#b45309">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Amalfi Coast, Positano &amp; Sorrento (Departs Napoli Centrale)</span>
+                    <span class="map-link-addr">Piazza Giuseppe Garibaldi, 80142 Naples, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Travel Home -->
+    <div class="map-region">
+        <div class="map-region-header" style="background:#f3f4f6;border-bottom-color:#e5e7eb;color:#374151">Travel Home</div>
+        <div>
+            <a href="https://maps.google.com/maps?q=Naples+International+Airport+NAP+Italy" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#e5e7eb;color:#374151">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Naples International Airport (NAP)</span>
+                    <span class="map-link-addr">Via del Riposo, 95, 80049 Napoli NA, Italy</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Chicago+O%27Hare+Airport+ORD" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#e5e7eb;color:#374151">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Chicago O'Hare Airport (ORD)</span>
+                    <span class="map-link-addr">10000 W O'Hare Ave, Chicago, IL 60666</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+            <a href="https://maps.google.com/maps?q=Cincinnati+Northern+Kentucky+Airport+CVG" class="map-link" target="_blank" rel="noopener">
+                <div class="map-link-icon" style="background:#e5e7eb;color:#374151">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"/></svg>
+                </div>
+                <div class="map-link-details">
+                    <span class="map-link-name">Cincinnati/Northern Kentucky Airport (CVG)</span>
+                    <span class="map-link-addr">3087 Terminal Dr, Hebron, KY 41048</span>
+                </div>
+                <svg class="map-link-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width:1rem;height:1rem"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"/></svg>
+            </a>
+        </div>
+    </div>
+
+</div>
+    </section>
+</div>
+
+<script>
+(function() {
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        document.querySelectorAll('a[href*="maps.google.com"]').forEach(function(a) {
+            var url = new URL(a.href);
+            var query = url.searchParams.get('q');
+            if (query) {
+                a.href = 'https://maps.apple.com/?q=' + encodeURIComponent(query);
+            }
+        });
+    }
+})();
+</script>
+
+</body>
+</html>
